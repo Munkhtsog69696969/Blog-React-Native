@@ -32,6 +32,8 @@ export default function CommentScreen({ route, navigation }) {
       .catch((err)=>console.log(err))
   },[id]);
 
+  // console.log(comments)
+
   return (
     <View style={styles.container}>
       {
@@ -42,43 +44,38 @@ export default function CommentScreen({ route, navigation }) {
         :
 
         <View style={styles.container}>
-          <Card style={styles.card}>
-              <View style={styles.profile}>
-                <Card.Cover style={styles.profileImg} source={{uri:article.user.profile_image}}/>
+          <ScrollView>
+            <Card style={styles.card}>
+                <View style={styles.profile}>
+                  <Card.Cover style={styles.profileImg} source={{uri:article.user.profile_image}}/>
+                  <Card.Content>
+                    <Text>{article.user.name}</Text>
+                  </Card.Content>
+                </View>
+                <Card.Title title={article.title} />
+                <Card.Cover style={styles.img} source={{uri:article?.cover_image}}/>
                 <Card.Content>
-                  <Text>{article.user.name}</Text>
+                  <Text>{article.description}</Text>
                 </Card.Content>
-              </View>
-              <Card.Title title={article.title} />
-              <Card.Cover style={styles.img} source={{uri:article.cover_image}}/>
-              <Card.Content>
-                <Text>{article.description}</Text>
-              </Card.Content>
-          </Card>
+            </Card>
 
-          <View style={styles.commentsContainer}>
-            <Text style={{fontSize:30 , fontWeight:600}}>Comments</Text>
-            <ScrollView>
-              {
-                commentLoading ? 
+            <View style={styles.commentsContainer}>
+              <Text style={{fontSize:30 , fontWeight:600}}>Comments</Text>
+                {
+                  commentLoading ? 
 
-                <ActivityIndicator size="large"/>
+                  <ActivityIndicator size="large"/>
 
-                :
+                  :
 
-                comments?.map((comment,i)=>{
-                  const html={
-                    html:`
-                      ${comment.body_html}
-                    `
-                  }
-                  return(
-                    <CommentRecursive key={i} replies={comment.children} html={comment.body_html}></CommentRecursive>
-                  )
-                })
-              }
-            </ScrollView>
-          </View>
+                  comments?.map((comment,i)=>{
+                    return(
+                      <CommentRecursive key={i} user={comment.user} replies={comment.children} html={comment.body_html}></CommentRecursive>
+                    )
+                  })
+                }
+            </View>
+          </ScrollView>
         </View>
       }
     </View>
