@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Button, Image, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, Button, Image, ScrollView , SafeAreaView } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { Avatar, Card } from 'react-native-paper';
+import {SignedIn , SignedOut , useSignUp } from '@clerk/clerk-expo';
 
 export default function HomeScreen({navigation}) {
-    const theme=useTheme();
+    const { isLoaded, signUp, setActive } = useSignUp();
+
     const [articles,setArticles]=useState();
 
     useEffect(()=>{
@@ -14,42 +16,42 @@ export default function HomeScreen({navigation}) {
             .catch(err=>console.log(err))
     },[]);
 
-    // console.log(articles)
-
     return (
-        <ScrollView>
-            <View style={styles.container}>
-                {
-                    articles?.map((article,i)=>{
-                        return(
-                            <Card style={styles.card} key={i}>
-                                <View style={styles.profile}>
-                                    <Card.Cover style={styles.profileImg} source={{uri:article?.user.profile_image}}/>
+        // <SafeAreaView>
+            <ScrollView>
+                <View style={styles.container}>
+                    {
+                        articles?.map((article,i)=>{
+                            return(
+                                <Card style={styles.card} key={i}>
+                                    <View style={styles.profile}>
+                                        <Card.Cover style={styles.profileImg} source={{uri:article?.user.profile_image}}/>
+                                        <Card.Content>
+                                            <Text style={{color:"white"}}>{article.user.name}</Text>
+                                        </Card.Content>
+                                    </View>
+
+                                    <Card.Title title={article.title}/>
+
+                                    <Card.Cover style={styles.cardImg} source={{uri:article?.cover_image}}/>
+
                                     <Card.Content>
-                                        <Text style={{color:"white"}}>{article.user.name}</Text>
+                                        <Text style={{color:"white"}}>{article.description}</Text>
                                     </Card.Content>
-                                </View>
 
-                                <Card.Title title={article.title}/>
-
-                                <Card.Cover style={styles.cardImg} source={{uri:article?.cover_image}}/>
-
-                                <Card.Content>
-                                    <Text style={{color:"white"}}>{article.description}</Text>
-                                </Card.Content>
-
-                                <Button
-                                    title='See comments'
-                                    onPress={()=>navigation.navigate("Comments",{
-                                        id:article.id,
-                                    })}
-                                />
-                            </Card>
-                        )
-                    })
-                }
-            </View>
-        </ScrollView>
+                                    <Button
+                                        title='See comments'
+                                        onPress={()=>navigation.navigate("Comments",{
+                                            id:article.id,
+                                        })}
+                                    />
+                                </Card>
+                            )
+                        })
+                    }
+                </View>
+            </ScrollView>
+        // </SafeAreaView>
     );
 }
 
